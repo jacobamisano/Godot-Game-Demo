@@ -1,0 +1,89 @@
+[gd_scene load_steps=10 format=3 uid="uid://bjjekux74q0k8"]
+
+[ext_resource type="Texture2D" uid="uid://xqplkj2vow0a" path="res://assets/brackeys_platformer_assets/sprites/slime_green.png" id="1_osbex"]
+[ext_resource type="PackedScene" uid="uid://bqsgxeuexrj12" path="res://scenes/killzone.tscn" id="2_vjc17"]
+
+[sub_resource type="GDScript" id="GDScript_wjxu6"]
+resource_name = "res://scripts/slime.gd"
+script/source = "extends Node2D
+@onready var ray_cast_right: RayCast2D = $RayCastRight
+@onready var ray_cast_left: RayCast2D = $RayCastLeft
+@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+
+const SPEED = 60
+
+var direction = 1 # -1 for left
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	if ray_cast_right.is_colliding():
+		direction = -1
+		animated_sprite_2d.flip_h = true
+	if ray_cast_left.is_colliding():
+		direction = 1
+		animated_sprite_2d.flip_h = false
+	position.x += SPEED * delta * direction
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0bude"]
+size = Vector2(12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rnrgc"]
+atlas = ExtResource("1_osbex")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y072l"]
+atlas = ExtResource("1_osbex")
+region = Rect2(24, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wf2ja"]
+atlas = ExtResource("1_osbex")
+region = Rect2(48, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s1lep"]
+atlas = ExtResource("1_osbex")
+region = Rect2(72, 24, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hb2uj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rnrgc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y072l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wf2ja")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s1lep")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 10.0
+}]
+
+[node name="GreenSlime" type="Node2D"]
+script = SubResource("GDScript_wjxu6")
+
+[node name="Killzone" parent="." instance=ExtResource("2_vjc17")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
+position = Vector2(0, 5)
+shape = SubResource("RectangleShape2D_0bude")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -1)
+sprite_frames = SubResource("SpriteFrames_hb2uj")
+animation = &"Idle"
+autoplay = "Idle"
+frame_progress = 0.782788
+
+[node name="RayCastRight" type="RayCast2D" parent="."]
+position = Vector2(0, 3)
+target_position = Vector2(9, 0)
+
+[node name="RayCastLeft" type="RayCast2D" parent="."]
+position = Vector2(0, 3)
+target_position = Vector2(-11, 0)
